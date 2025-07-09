@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athithya P - Professional Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter for a professional and modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Smooth scroll for navigation */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Keyframes for Hero Section Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Pulse animation for hero image */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+            50% { transform: scale(1.02); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        }
+
+        /* Apply animations to hero section elements */
+        .animate-fade-in-down { animation: fadeInDown 0.8s ease-out forwards; }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+        .animate-fade-in-right { animation: fadeInRight 0.8s ease-out forwards; }
+        .hero-image-pulse { animation: pulse 2s infinite ease-in-out; }
+
+        /* Scroll reveal animation styles */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Enhanced card hover effect */
+        .hover-lift-shadow {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+        .hover-lift-shadow:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.2), 0 8px 16px -8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Horizontal Scroll Progress Bar */
+        #progressBar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%; /* Initial width, will be updated by JS */
+            height: 4px; /* Height of the bar */
+            background-color: '#2c3e50'; /* A shade of your slate-blue */
+            z-index: 50;
+            transition: width 0.1s linear; /* Smoother transition */
+        }
+
+        /* Hero section background image with blur and gradient overlay */
+        .hero-background-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Ensures blur doesn't extend beyond container */
+            z-index: 0; /* Ensures content is above it */
+        }
+
+        .hero-background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(8px); /* Adjust blur intensity */
+            transform: scale(1.05); /* Slightly scale to avoid blurry edges from blur filter */
+        }
+
+        .hero-background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(31, 41, 55, 0.8), rgba(44, 62, 80, 0.6)); /* Darker slate-blue gradient overlay */
+            z-index: 1; /* Above image, below content */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2; /* Ensure content is on top */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'slate-blue': {
+                            DEFAULT: '#34495e', /* Primary dark blue from shirt */
+                            '50': '#ecf0f1',   /* Very light for backgrounds */
+                            '100': '#aec0d0',  /* Lighter for accents/tags */
+                            '600': '#2c3e50',  /* Deeper for buttons/strong accents */
+                            '700': '#253342',  /* Even deeper for main headings/links */
+                            '800': '#1f2937',  /* Very dark for strong text/footer */
+                            '900': '#151e27',  /* Near black for deepest shades */
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Scroll Progress Bar -->
+    <div id="progressBar"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg fixed w-full z-10 top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <!-- Added whitespace-nowrap to keep "Athithya P" on a single line -->
+                    <a href="#home" class="flex-shrink-0 font-bold text-xl text-slate-blue-700 rounded-lg p-2 transition duration-300 hover:bg-slate-blue-50 whitespace-nowrap">Athithya P</a>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden md:block">
+                        <a href="#about" class="text-gray-600 hover:text-slate-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-300 hover:bg-gray-100">About</a>
+                        <a href="#skills" class="text-gray-600 hover:text-slate-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-300 hover:bg-gray-100">Skills</a>
+                        <a href="#experience" class="text-gray-600 hover:text-slate-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-300 hover:bg-gray-100">Experience</a>
+                        <a href="#projects" class="text-gray-600 hover:text-slate-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-300 hover:bg-gray-100">Projects</a>
+                        <a href="#contact" class="text-gray-600 hover:text-slate-blue-700 px-3 py-2 rounded-md text-sm font-medium transition duration-300 hover:bg-gray-100">Contact</a>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex items-center md:hidden">
+                    <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-blue-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition duration-300" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <!-- Icon when menu is closed. -->
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <!-- Icon when menu is open. -->
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#about" class="text-gray-600 hover:text-slate-blue-700 block px-3 py-2 rounded-md text-base font-medium transition duration-300 hover:bg-gray-100">About</a>
+                <a href="#skills" class="text-gray-600 hover:text-slate-blue-700 block px-3 py-2 rounded-md text-base font-medium transition duration-300 hover:bg-gray-100">Skills</a>
+                <a href="#experience" class="text-gray-600 hover:text-slate-blue-700 block px-3 py-2 rounded-md text-base font-medium transition duration-300 hover:bg-gray-100">Experience</a>
+                <a href="#projects" class="text-gray-600 hover:text-slate-blue-700 block px-3 py-2 rounded-md text-base font-medium transition duration-300 hover:bg-gray-100">Projects</a>
+                <a href="#contact" class="text-gray-600 hover:text-slate-blue-700 block px-3 py-2 rounded-md text-base font-medium transition duration-300 hover:bg-gray-100">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative text-white flex items-center justify-center min-h-screen py-16 pt-32">
+        <!-- Blurred Image Background -->
+        <div class="hero-background-container">
+            <img src="me.jpg" alt="Abstract Background" class="hero-background-image">
+            <div class="hero-background-overlay"></div>
+        </div>
+
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-center px-4 sm:px-6 lg:px-8 text-center md:text-left hero-content">
+            <div class="md:w-1/2 mb-8 md:mb-0 md:pr-10">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-down">
+                    Hello, I'm Athithya P
+                </h1>
+                <p class="text-lg sm:text-xl lg:text-2xl mb-8 opacity-90 animate-fade-in-up">
+                    A highly motivated and detail-oriented individual with a strong analytical mindset and a passion for problem-solving.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#projects" class="inline-block bg-white text-slate-blue-700 font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-slate-blue-100 transition duration-300 transform hover:scale-105">View Projects</a>
+                    <a href="#contact" class="inline-block border-2 border-white text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-white hover:text-slate-blue-700 transition duration-300 transform hover:scale-105">Get in Touch</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center md:justify-end">
+                <!-- User's photo - reverted to circular with original sizing and pulse animation -->
+                <img src="me.jpg" alt="Athithya P" class="rounded-full shadow-xl ring-4 ring-white ring-opacity-60 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-cover animate-fade-in-right hero-image-pulse">
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about" class="py-16 sm:py-24 bg-white scroll-reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">About Me</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-lg text-gray-700 leading-relaxed">
+                    <p class="mb-4">
+                        A highly motivated and detail-oriented individual with a strong analytical mindset and a passion for problem-solving. I thrive in dynamic environments that challenge me to think critically and innovate.
+                    </p>
+                    <p class="mb-4">
+                        With a keen eye for perfection and a commitment to continuous learning, I excel both independently and as part of a team. Adaptability, creativity, and a results-driven approach define my work ethic, making me eager to contribute and grow in a professional setting.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center sm:justify-start space-y-4 sm:space-y-0 sm:space-x-4 mt-6">
+                        <a href="https://www.linkedin.com/in/athithya-p-61949a335/" target="_blank" class="inline-flex items-center bg-slate-blue-600 text-white font-semibold py-3 px-6 rounded-full shadow-md hover:bg-slate-blue-700 transition duration-300 transform hover:scale-105">
+                            View LinkedIn Profile
+                            <i class="fab fa-linkedin ml-2 text-lg"></i>
+                        </a>
+                        <a href="ATHITHYA ATS RESUME.pdf" target="_blank" class="inline-flex items-center border-2 border-slate-blue-600 text-slate-blue-700 font-semibold py-3 px-6 rounded-full shadow-md hover:bg-slate-blue-50 transition duration-300 transform hover:scale-105">
+                            View My CV
+                            <i class="fas fa-file-pdf ml-2 text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="p-8 bg-slate-blue-50 rounded-xl shadow-lg border border-slate-blue-100 hover-lift-shadow">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-3 border-slate-blue-200">Education</h3>
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800">Bannari Amman Institute of Technology</h4>
+                        <p class="text-md text-gray-600">Sathyamangalam, India</p>
+                        <p class="text-md text-gray-600">Oct 2022 - April 2026</p>
+                        <p class="text-md text-gray-700 font-medium">CGPA: 7.00</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800">Kuyilappalayam Higher Secondary School</h4>
+                        <p class="text-md text-gray-600">Auroville - India</p>
+                        <p class="text-md text-gray-600">June 2019 - May 2021</p>
+                        <p class="text-md text-gray-700 font-medium">HSC: 83%, SSLC: 96%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16 sm:py-24 bg-gray-50 scroll-reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">Skills</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Languages -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4 flex items-center">
+                        Languages
+                    </h3>
+                    <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
+                        <li>Java <i class="fab fa-java text-gray-500 ml-1"></i></li>
+                        <li>C</li>
+                        <li>Golang <i class="fab fa-gofore mr-3 text-slate-blue-600"></i></li>
+                    </ul>
+                </div>
+                <!-- Data Science Frameworks & Libraries (for general ML/data science frameworks) -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4 flex items-center">
+                        <i class="fas fa-brain mr-3 text-slate-blue-600"></i>
+                        Data Science Frameworks & Libraries
+                    </h3>
+                    <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
+                        <li>Pandas</li>
+                        <li>Numpy</li>
+                        <li>Tensorflow</li>
+                        <li>Keras</li>
+                    </ul>
+                </div>
+                <!-- Web Technologies (for technologies used in this portfolio) -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4 flex items-center">
+                        <i class="fas fa-globe mr-3 text-slate-blue-600"></i>
+                        Web Technologies
+                    </h3>
+                    <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
+                        <li>HTML <i class="fab fa-html5 text-gray-500 ml-1"></i></li>
+                        <li>CSS <i class="fab fa-css3-alt text-gray-500 ml-1"></i></li>
+                        <li>JavaScript <i class="fab fa-js-square text-gray-500 ml-1"></i></li>
+                        <li>Tailwind CSS</li>
+                    </ul>
+                </div>
+                <!-- Tools -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4 flex items-center">
+                        <i class="fas fa-toolbox mr-3 text-slate-blue-600"></i>
+                        Tools
+                    </h3>
+                    <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
+                        <li>Excel</li>
+                        <li>PowerPoint</li>
+                        <li>Word</li>
+                        <li>Adobe Premiere Pro <span class="font-bold text-red-500 ml-1">Pr</span></li>
+                        <li>After Effects <span class="font-bold text-purple-500 ml-1">Ae</span></li>
+                        <li>Visual Studio Code <i class="fas fa-laptop-code text-gray-500 ml-1"></i></li>
+                        <li>Google Collab <i class="fas fa-laptop text-gray-500 ml-1"></i></li>
+                        <li>Github <i class="fab fa-github text-gray-500 ml-1"></i></li>
+                        <li>Intelg Idea <span class="font-bold text-orange-500 ml-1">I<span class="text-blue-500">J</span></span></li>
+                        <li>Figma <i class="fab fa-figma text-gray-500 ml-1"></i></li>
+                    </ul>
+                </div>
+                <!-- Creative Skills -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4 flex items-center">
+                        <i class="fas fa-lightbulb mr-3 text-slate-blue-600"></i>
+                        Creative Skills
+                    </h3>
+                    <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
+                        <li>Video Editing <i class="fas fa-video text-gray-500 ml-1"></i></li>
+                        <li>UI/UX Design <i class="fas fa-paint-brush text-gray-500 ml-1"></i></li>
+                    </ul>
+                </div>
+                <!-- Soft Skills -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4 flex items-center">
+                        <i class="fas fa-handshake mr-3 text-slate-blue-600"></i> <!-- Main icon for Soft Skills category -->
+                        Soft Skills
+                    </h3>
+                    <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
+                        <li>People Management</li>
+                        <li>Excellent Communication</li>
+                        <li>Problem-solving</li>
+                        <li>Analytical Mindset</li>
+                        <li>Adaptability</li>
+                        <li>Creativity</li>
+                        <li>Results-driven</li>
+                    </ul>
+                </div>
+                <!-- Communication -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4 flex items-center">
+                        <i class="fas fa-language mr-3 text-slate-blue-600"></i>
+                        Communication
+                    </h3>
+                    <ul class="list-disc list-inside text-lg text-gray-700 space-y-2">
+                        <li>Tamil</li>
+                        <li>English</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-16 sm:py-24 bg-white scroll-reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">Experience</h2>
+            <div class="bg-slate-blue-50 p-8 rounded-xl shadow-lg border border-slate-blue-100 hover-lift-shadow">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Freelance Video Editor</h3>
+                    <p class="text-lg text-gray-700 mb-1">Game On Solution Pvt</p>
+                    <p class="text-md text-gray-600">Sep 2024 - Aug 2025</p>
+                    <ul class="list-disc list-inside text-lg text-gray-700 mt-4 space-y-2">
+                        <li>Edited and produced high-quality video content for GameOn Solutions pvt, enhancing brand engagement and marketing efforts.</li>
+                        <li>Optimized video assets for various platforms, ensuring timely delivery and adherence to project specifications.</li>
+                        <li>Collaborated effectively with cross-functional teams to achieve project goals.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-16 sm:py-24 bg-gray-50 scroll-reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">My Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Project 1: Neurodegenerative Disease Diagnosis Web Application -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4">Neurodegenerative Disease Diagnosis Web Application</h3>
+                    <p class="project-description text-lg text-gray-700 mb-4 leading-relaxed">
+                        Developed an AI-powered web application for early detection of neurodegenerative diseases (e.g., Alzheimer's) using MRI image analysis, rectifying delays in traditional diagnostic processes.
+                    </p>
+                    <ul class="list-disc list-inside text-base text-gray-700 space-y-2 mb-4">
+                        <li>Implemented a Convolutional Neural Network (CNN) to interpret MRI scans, providing a rapid, automated solution for initial disease prediction, thus reducing reliance on manual, time-consuming assessments.</li>
+                        <li>Created a comprehensive informational hub within the application to enhance public and professional understanding of Alzheimer's Disease, bridging knowledge gaps and fostering awareness.</li>
+                    </ul>
+                    <div class="flex flex-wrap gap-2 text-sm mb-4">
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">AI/ML</span>
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">CNN</span>
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">Web Application</span>
+                    </div>
+                </div>
+
+                <!-- Project 2: Automated Ventilator with Integrated Health Monitoring & GSM Oxygen Alerts -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4">Automated Ventilator with Integrated Health Monitoring & GSM Oxygen Alerts</h3>
+                    <p class="project-description text-lg text-gray-700 mb-4 leading-relaxed">
+                        Engineered a medical device providing precise mechanical ventilation, continuous vital sign tracking (heart rate, BP, SpO2), and immediate mobile alerts for critical oxygen levels or vital parameter deviations.
+                    </p>
+                    <ul class="list-disc list-inside text-base text-gray-700 space-y-2 mb-4">
+                        <li>Enhanced Patient Safety & Timely Intervention: Rectifies delayed critical care response by delivering real-time patient data and automated alerts, ensuring prompt medical attention and improving patient outcomes in clinical settings.</li>
+                    </ul>
+                    <div class="flex flex-wrap gap-2 text-sm mb-4">
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">Medical Device</span>
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">IoT</span>
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">GSM Alerts</span>
+                    </div>
+                </div>
+
+                <!-- Project 3: Biomedical Support Ticket system -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift-shadow transition duration-300 transform border border-gray-100">
+                    <h3 class="text-2xl font-bold text-slate-blue-700 mb-4">Biomedical Support Ticket System</h3>
+                    <p class="project-description text-lg text-gray-700 mb-4 leading-relaxed">
+                        Developed a full-stack Biomedical Support Ticket system using React.js for the frontend and Go (Gin framework) for the backend.
+                    </p>
+                    <ul class="list-disc list-inside text-base text-gray-700 space-y-2 mb-4">
+                        <li>Rectified critical cross-origin resource sharing (CORS) errors by implementing robust `gin-contrib/cors` middleware configurations, ensuring seamless communication between frontend and backend.</li>
+                        <li>Engineered a user-friendly application for efficient ticket tracking and management, improving biomedical support workflows and data integrity.</li>
+                    </ul>
+                    <div class="flex flex-wrap gap-2 text-sm mb-4">
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">Full-Stack</span>
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">React.js</span>
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">Golang</span>
+                        <span class="bg-slate-blue-100 text-slate-blue-800 px-3 py-1 rounded-full font-medium">CORS Handling</span>
+                    </div>
+                    <a href="https://github.com/Athi124" target="_blank" class="inline-flex items-center text-slate-blue-600 hover:text-slate-blue-800 font-semibold mt-4 transition duration-300">
+                        View on GitHub
+                        <i class="fab fa-github ml-2 text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 sm:py-24 bg-white scroll-reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">Get in Touch</h2>
+            <div class="bg-slate-blue-50 p-8 rounded-xl shadow-lg text-center border border-slate-blue-100 hover-lift-shadow">
+                <p class="text-lg text-gray-700 mb-6">
+                    Feel free to connect with me for collaborations, opportunities, or just to say hello!
+                </p>
+                <div class="space-y-4 mb-8">
+                    <p class="text-xl font-medium text-gray-800 flex items-center justify-center">
+                        <i class="fas fa-envelope mr-3 text-slate-blue-600"></i>
+                        Email: <a href="mailto:athithya.bm22@bitsaty.ac.in" class="text-slate-blue-600 hover:underline ml-2">athithya.bm22@bitsaty.ac.in</a>
+                    </p>
+                    <p class="text-xl font-medium text-gray-800 flex items-center justify-center">
+                        <i class="fas fa-phone mr-3 text-slate-blue-600"></i>
+                        Mobile: <a href="tel:+919361672937" class="text-slate-blue-600 hover:underline ml-2">+91 9361672937</a>
+                    </p>
+                </div>
+                <div class="flex justify-center space-x-6">
+                    <a href="https://www.linkedin.com/in/athithya-p-61949a335/" target="_blank" class="text-gray-600 hover:text-slate-blue-700 transition duration-300 transform hover:scale-110">
+                        <i class="fab fa-linkedin fa-2x" aria-hidden="true"></i>
+                        <span class="sr-only">LinkedIn</span>
+                    </a>
+                    <a href="https://github.com/Athi124" target="_blank" class="text-gray-600 hover:text-slate-blue-700 transition duration-300 transform hover:scale-110">
+                        <i class="fab fa-github fa-2x" aria-hidden="true"></i>
+                        <span class="sr-only">GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Athithya P. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="https://www.linkedin.com/in/athithya-p-61949a335/" target="_blank" class="text-gray-400 hover:text-white transition duration-300">LinkedIn</a>
+                <a href="https://github.com/Athi124" target="_blank" class="text-gray-400 hover:text-white transition duration-300">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Mobile Menu Toggle and Animations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function () {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    mobileMenu.classList.toggle('hidden');
+                    this.querySelector('svg:first-child').classList.toggle('hidden');
+                    this.querySelector('svg:last-child').classList.toggle('hidden');
+                });
+
+                mobileMenu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenuButton.setAttribute('aria-expanded', 'false');
+                        mobileMenuButton.querySelector('svg:first-child').classList.remove('hidden');
+                        mobileMenuButton.querySelector('svg:last-child').classList.add('hidden');
+                    });
+                });
+            }
+
+            // Horizontal Scroll Progress Bar
+            const progressBar = document.getElementById('progressBar');
+            window.addEventListener('scroll', () => {
+                const scrollableHeight = document.body.scrollHeight - window.innerHeight;
+                const scrolledPercentage = (window.scrollY / scrollableHeight) * 100;
+                progressBar.style.width = scrolledPercentage + '%';
+            });
+
+            // Intersection Observer for Scroll Reveal
+            const sections = document.querySelectorAll('.scroll-reveal');
+            const observerOptions = {
+                root: null, /* viewport as root */
+                rootMargin: '0px',
+                threshold: 0.1 /* 10% of element visible to trigger */
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); /* Stop observing once revealed */
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
